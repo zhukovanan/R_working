@@ -86,7 +86,10 @@ ggplot(cohort_stat , aes(Period,Average_AGMPU)) +
   ggtitle("AGMPU Approximation") +
   theme_minimal()
 
-#Ltv Prediction for for 100-152 weeks
-prediction <- data.table(Period = 2)
-prediction[,  AGMPU := predict(fit_AGMPU, Period = prediction$Period ) ]
-predict(fit_AGMPU,Period = 105)
+#Ltv Prediction for for 52 weeks
+prediction <- data.table(Period = 0:52)
+prediction[,  `:=` (AGMPU_pred = predict(fit_AGMPU ,newdata  = prediction ),
+                    Retention_pred = predict(fit_retention ,newdata  = prediction))]
+
+#Final Ltv
+Ltv <- prediction[, .(Ltv = sum(AGMPU_pred*abs(Retention_pred)))] %>% dplyr::pull()
