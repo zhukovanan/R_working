@@ -36,7 +36,6 @@ x <- c("Январь", "Февраль", "Март", "Апрель", "Май", "
 sales[, `:=` (Cohort_month = factor(format(First_time_month, "%B"), levels = x), Cohort_week = week(Date))][order(Cohort_month)]
 
 #From wide format data
-x <- c("Январь", "Февраль", "Март", "Апрель", "МаЙ", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь" , "Декабрь")
 MAU.month.grid <- tidyr::pivot_wider(data = sales[order(Period_month, Cohort_month )], Cohort_month , names_from = Period_month, values_from = PhoneNumber, values_fn = uniqueN, values_fill = 0)
 #Change column names
 colnames(MAU.month.grid)[2] <- c("First")
