@@ -44,5 +44,35 @@ colnames(MAU.month.grid)[3:13] <- paste("Period", colnames(MAU.month.grid)[3:13]
 #Calculate Retention by month cohort
 setDT(MAU.month.grid)[, c(3:13) := lapply(.SD, function(x) round(x/First,3)),.SD = c(3:13) ]
 
+longformat <- tidyr::pivot_longer(MAU.month.grid, -c(1,2), names_to = "Period_month", values_to = "percent") 
+setDT(longformat)[,  Period_month := as.numeric(gsub("Period_", "",Period_month )),
+                           ][order(Cohort_month,Period_month) ]
 
+  ggplot(longformat, aes(Period_month, reorder(Cohort_month, dplyr::desc(Cohort_month))))+
+  geom_raster(aes(fill = percent)) +
+    scale_fill_continuous(guide = FALSE) + # no legend
+    xlab("cohort age") + ylab("cohort") 
+  
+avgs.ret <- round(apply(cw.retention[,-1],2,mean, na.rm=TRUE),4)
+cw.retention <- MAU.month.grid
+rbind(cw.retention,avgs.ret)
+cw.retention <- dplyr::bind_rows(cw.retention, avgs.ret )
+
+breaks <- quantile(cw.retention[,3:13], probs = seq(.05, .95, .025), na.rm = TRUE)
+colors <- sapply(round(seq(155, 80, length.out = length(breaks) + 1), 0),
+                 function(x){ rgb(x,x,155, maxColorValue = 155) } )
+library(DT)
+ datatable(cw.retention,
+              class = 'cell-border stripe',
+              rownames = FALSE,
+              options = list(
+                ordering=F,
+                dom = 't',
+                pageLength = 13) ) %>%
+  formatStyle("Cohort_month",
+              backgroundColor = 'lightgrey',
+              fontWeight = 'bold') %>%
+  formatPercentage(c(3:13),2) %>% # We don't want column 0 in %
+  formatStyle("First", fontWeight = 'bold') %>%
+  formatStyle(names(cw.retention[c(3)]),color = 'white',fontWeight = 'bold', backgroundColor = styleInterval(breaks,colors))
 
