@@ -14,7 +14,7 @@ df <- pd$read_json("https://suppliers-stats.wildberries.ru/api/v1/supplier/incom
 #Connect to SQL Server
 
 con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "SQL002\\MSSQL002", 
-                 Database = "report_kr",user = "report", password = "shitcode", Trusted_Connection = "True", encoding = "1251")
+                 Database = "report_kr", UID = "report", PWD = rstudioapi::askForPassword("Database password"), encoding = "1251)
 
 #Try convert to appropriate data type 
 df$date <- as.Date.character(df$date)
