@@ -34,13 +34,27 @@ order_stat <- dbGetQuery(con, "with t as (select  DISTINCT m.*, brands.name as b
                           WHERE Unit = 'КрасоткаПроТрейд' and orders.Date >= '20201210'
                           group by n.Подкатегория , Number,  cast(orders.Date as Date)")
 
-#Form matrix of occurence
-Matrix_occurence <- crossprod(table(order_stat[,c(3,1)])) #First part is index of order number column , the second - category column
-diag(Matrix_occurence) <- 0
+#Count of occurrences of 3 subcategory in order and separate for next joins
+new <- setDT(order_stat)[, if (.N >= 3L) .(triplet =  
+                                      sapply(combn(Подкатегория, 3L, simplify = FALSE),paste, collapse = "|")),
+                  by = .(
+                    Number,Date) ][, c("one", "two", "three") := tstrsplit(triplet, "|", fixed=TRUE)]
+#Set keys
+setkey(new, Number,one, two, three)
+setkey(order_stat, Number, Подкатегория)
 
-#Transform matrix in more useful type
-Occurence <- as.data.frame(as.table(Matrix_occurence)) %>% 
-             dplyr::rename(Category = Подкатегория, Friend_category =  Подкатегория.1 )
-#Define Category goes with friend category always 
-lone_wolf <- Occurence %>% dplyr::filter(Freq == 0) %>% .$Category %>% unique()
-Occurence %>% dplyr::filter(Freq =!0 & Category  )
+#Join sales
+new <- new[, one_sale := order_stat[new, on = c(Number = "Number", Подкатегория = "one" ), 
+         x.Sale] ][, two_sale := order_stat[new, on = c(Number = "Number", Подкатегория = "two" ), 
+         x.Sale]][, three_sale := order_stat[new, on = c(Number = "Number", Подкатегория = "three" ), 
+                                           x.Sale]]
+#Join Reward
+new <- new[, one_profit := order_stat[new, on = c(Number = "Number", Подкатегория = "one" ), 
+                                    x.Reward] ][, two_profit := order_stat[new, on = c(Number = "Number", Подкатегория = "two" ), 
+                                    x.Reward]][, three_profit := order_stat[new, on = c(Number = "Number", Подкатегория = "three" ), 
+                                    x.Reward]]
+#Get total sum for sales and reward in terms of combinations
+new <- new[, Sale := Reduce(`+`, .SD), .SDcol = 7:9][,Reward := Reduce(`+`, .SD), .SDcol = 10:12][,c(4:12) := NULL]
+#Get mean statistics 
+new <- new[ , .(Sale = sum(Sale), Reward = sum(Reward), Q= .N) ,by = .(triplet, month(Date))][, .(Sale = 
+                                                                                      mean(Sale, na.rm =  T), Reward = mean(Reward, na.rm = T), Q = round(mean(Q))) , by = triplet ][order(-Q)]
