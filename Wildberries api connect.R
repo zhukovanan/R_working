@@ -12,12 +12,12 @@ taskscheduler_create(taskname = "myscriptdaily", rscript = 'C:/Users/a.shukov/De
                      schedule = "DAILY", starttime = "20:08", 
                      startdate = format(Sys.Date(), "%d/%m/%Y"))
 tasks <- taskscheduler_ls()
-str$)
+
 #Form named api vector 
-api.par <- c("ГЕМ" = "NDY4Zjk0NjQtNTBiOC00MWM5LWE4MDQtOWI4M2Y5ZTQ1MTAz" , "КТ" = "Y2ViOTVkNTgtZjUyOS00ZmY4LWI3YjYtZjhjYjM3NTQzNWRk"
-, "КСВ" = "MmVkOGZkZTgtYjVmNi00ZTk4LWJhYzMtMWI5ZWU5MDVmZTNi", "МОДЖИО" = "ZGYzY2VkYmUtMDI5MC00ZTU2LWI4YmUtMDNlZTA5MGIzYjgy",
-"МЕВ" = "NDJjZTM3OWMtZDQ1Yi00ZDY1LTkwMGItODA3MjQ4ODY1MzA4" , "МАС" = "ODRlOTNiMTEtNTg1OC00ZDg1LTlkZDYtZmI3ODU2OTFiMmVm" ,
- "УРК" = "MGI0NzhkYjMtYjg1Yy00Nzg2LWI2MTUtMDQxMWYzMmI3Nzli")
+api.par <- c("N" = "1234" , "M" = "1232"
+, "NE" = "3456", "L" = "3456",
+"RFG" = "5445" , "FM" = "4365" ,
+ "SMN" = "6547")
 
 path <- "https://suppliers-stats.wildberries.ru/api/v1/supplier/"
 #Make functions for different api tables
@@ -44,8 +44,8 @@ Stock_WB <- do.call(dplyr::bind_rows, lapply(api.par, wb.api, "stocks" ))
 
 #Connect to SQL Server
 
-con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "SQL002\\MSSQL002", 
-                 Database = "report_kr", UID = "report", PWD = "shitcode", encoding = "1251")
+con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "####", 
+                 Database = "####", UID = "####", PWD = "####", encoding = "1251")
 
 #Fresh sql data
 dbWriteTable(con, "Sales_WB" , Sales_WB, append = TRUE)
