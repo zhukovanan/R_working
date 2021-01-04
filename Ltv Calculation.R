@@ -9,8 +9,8 @@ library(mgcv)
 library(magrittr)
 
 #Create connection to database
-con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "SQL002\\MSSQL002", 
-                 Database = "report_kr", Trusted_Connection = "True", encoding = "1251")
+con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "####", 
+                 Database = "####", Trusted_Connection = "True", encoding = "1251")
 #Load sales data
 #Check field of tables
 dbListFields(con, "sales")
