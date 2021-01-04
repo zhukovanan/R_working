@@ -11,7 +11,7 @@ library(taskscheduleR)
 taskscheduler_create(taskname = "myscriptdaily", rscript = 'C:/Users/a.shukov/Desktop/Prog/R/Wildberries_api_connect.R' , 
                      schedule = "DAILY", starttime = "20:08", 
                      startdate = format(Sys.Date(), "%d/%m/%Y"))
-tasks <- taskscheduler_ls()
+
 
 #Form named api vector 
 api.par <- c("N" = "1234" , "M" = "1232"
