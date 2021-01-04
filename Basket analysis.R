@@ -8,14 +8,14 @@ library(magrittr)
 
 
 #Create connection to database
-con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "SQL002\\MSSQL002", 
-                 Database = "report_kr", Trusted_Connection = "True", encoding = "1251")
+con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "####", 
+                 Database = "####", Trusted_Connection = "True", encoding = "1251")
 
 order_stat <- dbGetQuery(con, "with t as (select  DISTINCT m.*, brands.name as brand
-	                        from (SELECT t1.name AS name,t1.code,t1.uid,t1.brand_uid,t1.date_add,t1.Artikul, t2.name as Подкатегория,t2.code as Code_PDK, t3.name as Категория,t3.code as Code_Cat, t4.name as Группа,t4.code as Code_Group
-                                FROM goods AS t1
-                                LEFT JOIN goods AS t2 ON t1.uid_Parents = t2.uid
-                                LEFT JOIN goods AS t3 ON t2.uid_Parents = t3.uid
+	                        from (select t1.name AS name,t1.code,t1.uid,t1.brand_uid,t1.date_add,t1.Artikul, t2.name as Подкатегория,t2.code as Code_PDK, t3.name as Категория,t3.code as Code_Cat, t4.name as Группа,t4.code as Code_Group
+                                from goods AS t1
+                                left join goods AS t2 ON t1.uid_Parents = t2.uid
+                                left join goods AS t3 ON t2.uid_Parents = t3.uid
                                 left join goods as t4 on t3.uid_Parents = t4.uid) as m left join brands on m.brand_uid = brands.uid), 
                           k as(select name, code, uid, brand, date_add,Artikul, Подкатегория,Code_PDK, coalesce(Категория,Подкатегория) as Категория,coalesce(Code_Cat,Code_PDK) as Code_Cat  , coalesce(Группа,Категория,Подкатегория) as Группа, coalesce(Code_Group,Code_Cat ,Code_PDK) as Code_Group
                                from t), 
