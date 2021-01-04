@@ -8,11 +8,11 @@ library(scales)
 library(mgcv)
 library(magrittr)
 
-#Create cpnnection to database
+#Create connection to database
 con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "SQL002\\MSSQL002", 
                  Database = "report_kr", Trusted_Connection = "True", encoding = "1251")
 #Load sales data
-##Check field of tables
+#Check field of tables
 dbListFields(con, "sales")
 
 sales <- dbGetQuery(con, "SELECT sum(sales.SaleSum) as Revenue , sum(RewardSumAll) as Profit , orders.PhoneNumber, Number, orders.Date as Date
@@ -86,7 +86,7 @@ ggplot(cohort_stat , aes(Period,Average_AGMPU)) +
   ggtitle("AGMPU Approximation") +
   theme_minimal()
 
-#Ltv Prediction for for 52 weeks
+#Ltv Prediction  for 52 weeks
 prediction <- data.table(Period = 0:52)
 prediction[,  `:=` (AGMPU_pred = predict(fit_AGMPU ,newdata  = prediction ),
                     Retention_pred = predict(fit_retention ,newdata  = prediction))]
