@@ -14,8 +14,8 @@ monnb <- function(d) { lt <- as.POSIXlt(as.Date(d, origin="1900-01-01"))
 mondf <- function(d1, d2) { monnb(d2) - monnb(d1) }
 
 #Create connection to database
-con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "SQL002\\MSSQL002", 
-                 Database = "report_kr", Trusted_Connection = "True", encoding = "1251")
+con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "####", 
+                 Database = "####", Trusted_Connection = "True", encoding = "1251")
 #Download data
 sales <- dbGetQuery(con, "SELECT  orders.PhoneNumber, Number, orders.Date as Date
                           FROM sales left join orders 
