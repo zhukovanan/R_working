@@ -16,7 +16,7 @@ mondf <- function(d1, d2) { monnb(d2) - monnb(d1) }
 #Create connection to database
 con <- dbConnect(odbc::odbc(), Driver = "SQL Server", Server = "SQL002\\MSSQL002", 
                  Database = "report_kr", Trusted_Connection = "True", encoding = "1251")
-#DownLoad data
+#Download data
 sales <- dbGetQuery(con, "SELECT  orders.PhoneNumber, Number, orders.Date as Date
                           FROM sales left join orders 
                           ON sales.OrderUID = orders.OrderUID
